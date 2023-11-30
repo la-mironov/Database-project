@@ -304,19 +304,27 @@ COMMENT ON COLUMN addres_reg.flat IS 'Квартира(при наличии)';
 ALTER TABLE ONLY addres_reg ADD CONSTRAINT addres_reg_pkey PRIMARY KEY (addres_reg_id);
 ------------- ТАБЛИЦА passport – Паспорт
 CREATE TABLE passport (
-human_id character(6) REFERENCES human(human_id) NOT NULL,
 series character(10) NOT NULL,
 num integer NOT NULL,
 addres_reg_id character(6) REFERENCES addres_reg(addres_reg_id) NOT NULL,
 date_iss date);
 COMMENT ON TABLE passport IS 'Паспорт';
-COMMENT ON COLUMN passport.human_id IS 'ID человека';
 COMMENT ON COLUMN passport.series IS 'Серия паспорта';
 COMMENT ON COLUMN passport.num IS 'Номер паспорта';
 COMMENT ON COLUMN passport.addres_reg_id IS 'ID адреса регистрации';
 COMMENT ON COLUMN passport.date_iss IS 'Дата выдачи';
-ALTER TABLE ONLY passport ADD CONSTRAINT passport_pkey PRIMARY KEY (human_id);
-ALTER TABLE ONLY passport ADD CONSTRAINT passport_unique UNIQUE (series, num);
+ALTER TABLE ONLY passport ADD CONSTRAINT passport_pkey PRIMARY KEY (series, num);
+------------- ТАБЛИЦА human_to_passport – Связь человека с пасспортром
+CREATE TABLE human_to_passport (
+human_id character(6) REFERENCES human(human_id) NOT NULL,
+series character(10) NOT NULL,
+num integer NOT NULL,
+CONSTRAINT human_to_passport_fkey FOREIGN KEY (series, num) REFERENCES passport(series, num));
+COMMENT ON TABLE human_to_passport IS 'Связь человека с пасспортром';
+COMMENT ON COLUMN human_to_passport.human_id IS 'ID человека';
+COMMENT ON COLUMN human_to_passport.series IS 'Серия паспорта';
+COMMENT ON COLUMN human_to_passport.num IS 'Номер паспорта';
+ALTER TABLE ONLY human_to_passport ADD CONSTRAINT passporthuman_to_passport_pkey PRIMARY KEY (human_id);
 ------------- ТАБЛИЦА human_contacts – Контактная информация о человеке
 CREATE TABLE human_contacts (
 cont_id character(6) NOT NULL,
