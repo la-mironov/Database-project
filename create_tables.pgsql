@@ -1,3 +1,13 @@
+-- Удаление всех таблиц
+DO $$ 
+DECLARE 
+    tn RECORD; 
+BEGIN 
+    FOR tn IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE') 
+    LOOP 
+        EXECUTE 'DROP TABLE IF EXISTS ' || tn.table_name || ' CASCADE'; 
+    END LOOP; 
+END $$;
 ------------- ТАБЛИЦА library – Библиотека
 CREATE TABLE library (
 lib_id character(6) NOT NULL,
@@ -135,7 +145,7 @@ COMMENT ON TABLE composition IS 'Произведение';
 COMMENT ON COLUMN composition.comp_id IS 'ID произведения';
 COMMENT ON COLUMN composition.author_id IS 'ID автора произведения';
 COMMENT ON COLUMN composition.name IS 'Название произведения';
-COMMENT ON COLUMN composition.date IS 'Дата выпуска';
+COMMENT ON COLUMN composition.date_wr IS 'Дата выпуска';
 ALTER TABLE ONLY composition ADD CONSTRAINT composition_pkey PRIMARY KEY (comp_id);
 ------------- ТАБЛИЦА publication_to_composition – Включаемые произведения
 CREATE TABLE publication_to_composition (
@@ -258,7 +268,7 @@ kol integer,
 date_deliv date
 CONSTRAINT pos_kol CHECK ((kol > 0)));
 COMMENT ON TABLE delivery_publ IS 'Поставка издания';
-COMMENT ON COLUMN delivery_publ.move_id IS 'ID движения';
+COMMENT ON COLUMN delivery_publ.del_id IS 'ID поставки';
 COMMENT ON COLUMN delivery_publ.contr_id IS 'ID договора';
 COMMENT ON COLUMN delivery_publ.nomen_num IS 'Номенклатурный номер';
 COMMENT ON COLUMN delivery_publ.kol IS 'Количество изделий в поставке';
