@@ -105,7 +105,6 @@ ALTER TABLE ONLY author ADD CONSTRAINT author_pkey PRIMARY KEY (author_id);
 CREATE TABLE publication (
 nomen_num character(6) NOT NULL,
 publ_categ_id character(6) REFERENCES publication_category(publ_categ_id) NOT NULL,
-author_id character(6) REFERENCES author(author_id) NOT NULL,
 publisher_id character(6) REFERENCES publisher(publisher_id) NOT NULL,
 name character(20) NOT NULL,
 publ_year date,
@@ -114,7 +113,6 @@ CONSTRAINT publication_pos_pages CHECK ((pages_num > 0)));
 COMMENT ON TABLE publication IS 'Издание';
 COMMENT ON COLUMN publication.nomen_num IS 'Номенклатурный номер';
 COMMENT ON COLUMN publication.publ_categ_id IS 'ID категории издания';
-COMMENT ON COLUMN publication.author_id IS 'ID автора';
 COMMENT ON COLUMN publication.publisher_id IS 'ID издателя';
 COMMENT ON COLUMN publication.name IS 'Название издания';
 COMMENT ON COLUMN publication.publ_year IS 'Год издания';
@@ -453,21 +451,17 @@ iss_id character(6) NOT NULL,
 vis_id character(6) REFERENCES visitor(vis_id) NOT NULL,
 libserv_id character(6) REFERENCES librarian_service(libserv_id) NOT NULL,
 inst_id character(6) REFERENCES instance(inst_id) NOT NULL,
-date_iss date DEFAULT NOW() NOT NULL);
+date_iss date DEFAULT NOW() NOT NULL,
+date_ret date
+CONSTRAINT date_issuance_in_future CHECK(date_iss <= NOW())
+CONSTRAINT date_return_in_future CHECK(date_ret <= NOW()));
 COMMENT ON TABLE issuance IS 'ВЫдача экземпляра';
 COMMENT ON COLUMN issuance.vis_id IS 'ID читателя';
 COMMENT ON COLUMN issuance.libserv_id IS 'ID библиотекаря';
 COMMENT ON COLUMN issuance.inst_id IS 'ID экземпляра';
 COMMENT ON COLUMN issuance.date_iss IS 'Дата выдачи';
+COMMENT ON COLUMN issuance.date_ret IS 'Дата возврата';
 ALTER TABLE ONLY issuance ADD CONSTRAINT issuance_pkey PRIMARY KEY (iss_id);
-------------- ТАБЛИЦА return_book – Возврат экземпляра
-CREATE TABLE return_book (
-iss_id character(6) REFERENCES issuance(iss_id) NOT NULL,
-date_ret date DEFAULT NOW() NOT NULL);
-COMMENT ON TABLE return_book IS 'Возврат экземпляра';
-COMMENT ON COLUMN return_book.iss_id IS 'ID выдачи';
-COMMENT ON COLUMN return_book.date_ret IS 'Дата возврата';
-ALTER TABLE ONLY return_book ADD CONSTRAINT return_book_pkey PRIMARY KEY (iss_id);
 ------------- ТАБЛИЦА student – Студент
 CREATE TABLE student (
 vis_id character(6) REFERENCES visitor(vis_id) NOT NULL,
