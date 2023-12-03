@@ -353,11 +353,13 @@ ALTER TABLE ONLY post ADD CONSTRAINT post_name_unique UNIQUE(name);
 ------------- ТАБЛИЦА salary – Зарплата
 CREATE TABLE salary (
 post_id character(6) REFERENCES post(post_id) NOT NULL,
+lib_id character(6) REFERENCES library(lib_id) NOT NULL,
 salary_val integer NOT NULL);
 COMMENT ON TABLE salary IS 'Зарплата';
 COMMENT ON COLUMN salary.post_id IS 'ID должности';
+COMMENT ON COLUMN salary.lib_id IS 'ID библиотеки';
 COMMENT ON COLUMN salary.salary_val IS 'Размер зарплаты';
-ALTER TABLE ONLY salary ADD CONSTRAINT salary_pkey PRIMARY KEY (post_id);
+ALTER TABLE ONLY salary ADD CONSTRAINT salary_pkey PRIMARY KEY (post_id, lib_id);
 ------------- ТАБЛИЦА employee – Сотрудник
 CREATE TABLE employee (
 emp_id character(6) REFERENCES human(human_id) NOT NULL,
