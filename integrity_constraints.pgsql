@@ -81,6 +81,11 @@ CREATE TRIGGER tg_employee_superiors_bef_ins_upd
 BEFORE UPDATE OR INSERT ON employee
 FOR EACH ROW
 EXECUTE PROCEDURE tf_employee_superiors();
+
+-- Информация о триггерах
+SELECT trigger_name, event_manipulation, event_object_table, action_statement, action_orientation, action_timing
+FROM information_schema.triggers; 
+
 --------------------------------------------------------------------------------------
 -- Сотрудник может быть управляющим только одного отдела (UNIQUE в department для manager_id)
 ALTER TABLE ONLY department ADD CONSTRAINT manager_only_one_department UNIQUE(manager_id);
