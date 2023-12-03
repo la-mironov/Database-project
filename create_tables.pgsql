@@ -245,6 +245,14 @@ COMMENT ON COLUMN requis_supp.city IS 'Город поставщика';
 COMMENT ON COLUMN requis_supp.street IS 'Название улицы';
 COMMENT ON COLUMN requis_supp.house IS 'Номер дома';
 ALTER TABLE ONLY requis_supp ADD CONSTRAINT requis_supp_pkey PRIMARY KEY (supp_id);
+------------- ТАБЛИЦА contacts_supp – Контакты поставщиков
+CREATE TABLE contacts_supp (
+phone_number character(20) NOT NULL,
+supp_id character(6) REFERENCES suppliers(supp_id) NOT NULL);
+COMMENT ON TABLE contacts_supp IS 'Контакты поставщиков';
+COMMENT ON COLUMN contacts_supp.supp_id IS 'ID поставщика';
+COMMENT ON COLUMN contacts_supp.phone_number IS 'Номер телефона';
+ALTER TABLE ONLY contacts_supp ADD CONSTRAINT contacts_supp_pkey PRIMARY KEY (phone_number);
 ------------- ТАБЛИЦА contract – Договор
 CREATE TABLE contract (
 contr_id character(6) NOT NULL,
@@ -341,14 +349,17 @@ COMMENT ON TABLE post IS 'Должность';
 COMMENT ON COLUMN post.post_id IS 'ID должности';
 COMMENT ON COLUMN post.name IS 'Название должности';
 ALTER TABLE ONLY post ADD CONSTRAINT post_pkey PRIMARY KEY (post_id);
+ALTER TABLE ONLY post ADD CONSTRAINT post_name_unique UNIQUE(name);
 ------------- ТАБЛИЦА salary – Зарплата
 CREATE TABLE salary (
 post_id character(6) REFERENCES post(post_id) NOT NULL,
+lib_id character(6) REFERENCES library(lib_id) NOT NULL,
 salary_val integer NOT NULL);
 COMMENT ON TABLE salary IS 'Зарплата';
 COMMENT ON COLUMN salary.post_id IS 'ID должности';
+COMMENT ON COLUMN salary.lib_id IS 'ID библиотеки';
 COMMENT ON COLUMN salary.salary_val IS 'Размер зарплаты';
-ALTER TABLE ONLY salary ADD CONSTRAINT salary_pkey PRIMARY KEY (post_id);
+ALTER TABLE ONLY salary ADD CONSTRAINT salary_pkey PRIMARY KEY (post_id, lib_id);
 ------------- ТАБЛИЦА employee – Сотрудник
 CREATE TABLE employee (
 emp_id character(6) REFERENCES human(human_id) NOT NULL,
@@ -398,12 +409,14 @@ CREATE TABLE instance (
 inst_id character(6) NOT NULL,
 nomen_num character(6) REFERENCES publication(nomen_num) NOT NULL,
 rroom_id character(6) REFERENCES reading_room(rroom_id) NOT NULL,
+rack integer NOT NULL,
 shelv integer NOT NULL);
 COMMENT ON TABLE instance IS 'Экземпляр издания';
 COMMENT ON COLUMN instance.inst_id IS 'ID экземпляра издания';
 COMMENT ON COLUMN instance.nomen_num IS 'Номенклатурный номер издания';
 COMMENT ON COLUMN instance.rroom_id IS 'ID читательского зала, где хранится экземпляр';
-COMMENT ON COLUMN instance.shelv IS 'Стеллаж';
+COMMENT ON COLUMN instance.rack IS 'Стеллаж';
+COMMENT ON COLUMN instance.shelv IS 'Полка';
 ALTER TABLE ONLY instance ADD CONSTRAINT instance_pkey PRIMARY KEY (inst_id);
 ------------- ТАБЛИЦА librarian_service – библиотекарь отдела обслуживания
 CREATE TABLE librarian_service (
@@ -503,7 +516,8 @@ human_id character(6) REFERENCES human(human_id) NOT NULL,
 post_id character(6) REFERENCES post(post_id) NOT NULL,
 dep_id character(6) REFERENCES department(dep_id) NOT NULL,
 date_add date NOT NULL,
-date_rem date NOT NULL);
+date_rem date NOT NULL
+CONSTRAINT add_after_rem CHECK(date_add < date_rem));
 COMMENT ON TABLE employee_move IS 'Движения сотрудников';
 COMMENT ON COLUMN employee_move.move_id IS 'ID движения';
 COMMENT ON COLUMN employee_move.human_id IS 'ID человека';
