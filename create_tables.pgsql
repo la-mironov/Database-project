@@ -245,6 +245,14 @@ COMMENT ON COLUMN requis_supp.city IS 'Город поставщика';
 COMMENT ON COLUMN requis_supp.street IS 'Название улицы';
 COMMENT ON COLUMN requis_supp.house IS 'Номер дома';
 ALTER TABLE ONLY requis_supp ADD CONSTRAINT requis_supp_pkey PRIMARY KEY (supp_id);
+------------- ТАБЛИЦА contacts_supp – Контакты поставщиков
+CREATE TABLE contacts_supp (
+phone_number character(20) NOT NULL,
+supp_id character(6) REFERENCES suppliers(supp_id) NOT NULL);
+COMMENT ON TABLE contacts_supp IS 'Контакты поставщиков';
+COMMENT ON COLUMN contacts_supp.supp_id IS 'ID поставщика';
+COMMENT ON COLUMN contacts_supp.phone_number IS 'Номер телефона';
+ALTER TABLE ONLY contacts_supp ADD CONSTRAINT contacts_supp_pkey PRIMARY KEY (phone_number);
 ------------- ТАБЛИЦА contract – Договор
 CREATE TABLE contract (
 contr_id character(6) NOT NULL,
