@@ -349,6 +349,7 @@ COMMENT ON TABLE post IS 'Должность';
 COMMENT ON COLUMN post.post_id IS 'ID должности';
 COMMENT ON COLUMN post.name IS 'Название должности';
 ALTER TABLE ONLY post ADD CONSTRAINT post_pkey PRIMARY KEY (post_id);
+ALTER TABLE ONLY post ADD CONSTRAINT post_name_unique UNIQUE(name);
 ------------- ТАБЛИЦА salary – Зарплата
 CREATE TABLE salary (
 post_id character(6) REFERENCES post(post_id) NOT NULL,
@@ -406,12 +407,14 @@ CREATE TABLE instance (
 inst_id character(6) NOT NULL,
 nomen_num character(6) REFERENCES publication(nomen_num) NOT NULL,
 rroom_id character(6) REFERENCES reading_room(rroom_id) NOT NULL,
+rack integer NOT NULL,
 shelv integer NOT NULL);
 COMMENT ON TABLE instance IS 'Экземпляр издания';
 COMMENT ON COLUMN instance.inst_id IS 'ID экземпляра издания';
 COMMENT ON COLUMN instance.nomen_num IS 'Номенклатурный номер издания';
 COMMENT ON COLUMN instance.rroom_id IS 'ID читательского зала, где хранится экземпляр';
-COMMENT ON COLUMN instance.shelv IS 'Стеллаж';
+COMMENT ON COLUMN instance.rack IS 'Стеллаж';
+COMMENT ON COLUMN instance.shelv IS 'Полка';
 ALTER TABLE ONLY instance ADD CONSTRAINT instance_pkey PRIMARY KEY (inst_id);
 ------------- ТАБЛИЦА librarian_service – библиотекарь отдела обслуживания
 CREATE TABLE librarian_service (
