@@ -503,7 +503,8 @@ human_id character(6) REFERENCES human(human_id) NOT NULL,
 post_id character(6) REFERENCES post(post_id) NOT NULL,
 dep_id character(6) REFERENCES department(dep_id) NOT NULL,
 date_add date NOT NULL,
-date_rem date NOT NULL);
+date_rem date NOT NULL
+CONSTRAINT add_after_rem CHECK(date_add < date_rem));
 COMMENT ON TABLE employee_move IS 'Движения сотрудников';
 COMMENT ON COLUMN employee_move.move_id IS 'ID движения';
 COMMENT ON COLUMN employee_move.human_id IS 'ID человека';
